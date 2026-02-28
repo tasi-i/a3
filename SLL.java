@@ -19,19 +19,13 @@ public class SLL<T> {
     private Node<T> head; // Head of the list
     private int size;     // Number of elements in the list
 
-    /**
-     * Constructs an empty singly linked list.
-     */
+    /** Constructs an empty singly linked list. */
     public SLL() {
         head = null;
         size = 0;
     }
 
-    /**
-     * Adds an element to the end of the list.
-     *
-     * @param data the element to add
-     */
+    /** Adds an element to the end of the list. */
     public void add(T data) {
         Node<T> newNode = new Node<>(data);
         if (head == null) {
@@ -46,13 +40,7 @@ public class SLL<T> {
         size++;
     }
 
-    /**
-     * Inserts an element at a specific index.
-     *
-     * @param index the position to insert the element at (0-based)
-     * @param data the element to insert
-     * @throws IndexOutOfBoundsException if index < 0 or index > size
-     */
+    /** Inserts an element at a specific index. */
     public void add(int index, T data) {
         if (index < 0 || index > size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
@@ -72,13 +60,7 @@ public class SLL<T> {
         size++;
     }
 
-    /**
-     * Removes the element at a specific index.
-     *
-     * @param index the position of the element to remove (0-based)
-     * @return the element that was removed
-     * @throws IndexOutOfBoundsException if index < 0 or index >= size
-     */
+    /** Removes the element at a specific index and returns it. */
     public T remove(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
@@ -99,13 +81,7 @@ public class SLL<T> {
         return removed.data;
     }
 
-    /**
-     * Returns the element at a specific index.
-     *
-     * @param index the position of the element to retrieve (0-based)
-     * @return the element at the specified index
-     * @throws IndexOutOfBoundsException if index < 0 or index >= size
-     */
+    /** Returns the element at a specific index. */
     public T get(int index) {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
@@ -117,29 +93,17 @@ public class SLL<T> {
         return current.data;
     }
 
-    /**
-     * Returns the number of elements in the list.
-     *
-     * @return the size of the list
-     */
+    /** Returns the number of elements in the list. */
     public int size() {
         return size;
     }
 
-    /**
-     * Returns true if the list is empty.
-     *
-     * @return true if size == 0, false otherwise
-     */
+    /** Returns true if the list is empty. */
     public boolean isEmpty() {
         return size == 0;
     }
 
-    /**
-     * Returns a string representation of the list.
-     *
-     * @return a string in the format [elem1, elem2, ...]
-     */
+    /** Returns a string representation of the list in [elem1, elem2, ...] format. */
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -154,5 +118,21 @@ public class SLL<T> {
         }
         sb.append("]");
         return sb.toString();
+    }
+
+    /** Main method for quick testing */
+    public static void main(String[] args) {
+        SLL<Integer> list = new SLL<>();
+        list.add(10);
+        list.add(20);
+        list.add(1, 15); // Insert 15 at index 1
+        System.out.println(list); // [10, 15, 20]
+
+        list.remove(1); 
+        System.out.println(list); // [10, 20]
+
+        System.out.println("Element at index 1: " + list.get(1)); // 20
+        System.out.println("Size: " + list.size()); // 2
+        System.out.println("Is empty? " + list.isEmpty()); // false
     }
 }
