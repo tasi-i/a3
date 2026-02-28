@@ -1,15 +1,23 @@
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 /**
- * A generic singly linked list implementation.
+ * A generic singly linked list (SLL) implementation in Java.
  *
- * @param <T> the type of elements stored in the list
+ * @param <T> the type of elements stored in this list
  */
-public class SLL<T> implements Iterable<T> {
+public class SLL<T> {
 
-    private NodeSL<T> head;
-    private int size;
+    /** Inner class representing a node in the linked list */
+    private static class Node<T> {
+        T data;
+        Node<T> next;
+
+        Node(T data) {
+            this.data = data;
+            this.next = null;
+        }
+    }
+
+    private Node<T> head; // Head of the list
+    private int size;     // Number of elements in the list
 
     /**
      * Constructs an empty singly linked list.
@@ -20,66 +28,93 @@ public class SLL<T> implements Iterable<T> {
     }
 
     /**
-     * Returns the head node of the list.
-     *
-     * @return the first node in the list, or null if empty
-     */
-    public NodeSL<T> getHead() {
-        return head;
-    }
-
-    /**
      * Adds an element to the end of the list.
      *
      * @param data the element to add
      */
-    public void addLast(T data) {
-        NodeSL<T> newNode = new NodeSL<>(data, null);
-
+    public void add(T data) {
+        Node<T> newNode = new Node<>(data);
         if (head == null) {
             head = newNode;
         } else {
-            NodeSL<T> current = head;
-            while (current.getNext() != null) {
-                current = current.getNext();
+            Node<T> current = head;
+            while (current.next != null) {
+                current = current.next;
             }
-            current.setNext(newNode);
+            current.next = newNode;
         }
         size++;
     }
 
     /**
-     * Inserts a new element after a given node.
+     * Inserts an element at a specific index.
      *
-     * @param node the node after which the new element is inserted
+     * @param index the position to insert the element at (0-based)
      * @param data the element to insert
+     * @throws IndexOutOfBoundsException if index < 0 or index > size
      */
-    public void addAfter(NodeSL<T> node, T data) {
-        if (node == null) {
-            throw new IllegalArgumentException("Node cannot be null");
+    public void add(int index, T data) {
+        if (index < 0 || index > size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
-
-        NodeSL<T> newNode = new NodeSL<>(data, node.getNext());
-        node.setNext(newNode);
+        Node<T> newNode = new Node<>(data);
+        if (index == 0) {
+            newNode.next = head;
+            head = newNode;
+        } else {
+            Node<T> prev = head;
+            for (int i = 0; i < index - 1; i++) {
+                prev = prev.next;
+            }
+            newNode.next = prev.next;
+            prev.next = newNode;
+        }
         size++;
     }
 
     /**
-     * Removes the node immediately following the given node.
+     * Removes the element at a specific index.
      *
-     * @param node the node before the one to remove
-     * @return the data of the removed node
+     * @param index the position of the element to remove (0-based)
+     * @return the element that was removed
+     * @throws IndexOutOfBoundsException if index < 0 or index >= size
      */
-    public T removeAfter(NodeSL<T> node) {
-        if (node == null || node.getNext() == null) {
-            throw new IllegalArgumentException("No node exists after the given node");
+    public T remove(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
         }
-
-        NodeSL<T> toRemove = node.getNext();
-        node.setNext(toRemove.getNext());
+        Node<T> removed;
+        if (index == 0) {
+            removed = head;
+            head = head.next;
+        } else {
+            Node<T> prev = head;
+            for (int i = 0; i < index - 1; i++) {
+                prev = prev.next;
+            }
+            removed = prev.next;
+            prev.next = removed.next;
+        }
         size--;
+        return removed.data;
+    }
 
-        return toRemove.getData();
+    /**
+     * Returns the element at a specific index.
+     *
+     * @param index the position of the element to retrieve (0-based)
+     * @return the element at the specified index
+     * @throws IndexOutOfBoundsException if index < 0 or index >= size
+     */
+    public T get(int index) {
+        if (index < 0 || index >= size) {
+            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+        }
+        Node<T> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next;
+        }
+        return current.data;
     }
 
     /**
@@ -92,31 +127,32 @@ public class SLL<T> implements Iterable<T> {
     }
 
     /**
-     * Returns an iterator over the elements in this list.
+     * Returns true if the list is empty.
      *
-     * @return an iterator
+     * @return true if size == 0, false otherwise
+     */
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    /**
+     * Returns a string representation of the list.
+     *
+     * @return a string in the format [elem1, elem2, ...]
      */
     @Override
-    public Iterator<T> iterator() {
-        return new Iterator<T>() {
-
-            private NodeSL<T> current = head;
-
-            @Override
-            public boolean hasNext() {
-                return current != null;
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        Node<T> current = head;
+        while (current != null) {
+            sb.append(current.data);
+            if (current.next != null) {
+                sb.append(", ");
             }
-
-            @Override
-            public T next() {
-                if (!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-
-                T data = current.getData();
-                current = current.getNext();
-                return data;
-            }
-        };
+            current = current.next;
+        }
+        sb.append("]");
+        return sb.toString();
     }
 }
