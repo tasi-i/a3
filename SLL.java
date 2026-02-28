@@ -1,11 +1,16 @@
-/**
- * A generic singly linked list (SLL) implementation in Java.
- *
- * @param <T> the type of elements stored in this list
- */
-public class SLL<T> {
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-    /** Inner class representing a node in the linked list */
+/**
+ * Singly Linked List implementation supporting iteration and split operations.
+ *
+ * @param <T> the type of elements stored in the list
+ */
+public class SLL<T> implements Iterable<T> {
+
+    /**
+     * Node class representing each element in the linked list.
+     */
     private static class Node<T> {
         T data;
         Node<T> next;
@@ -16,123 +21,188 @@ public class SLL<T> {
         }
     }
 
-    private Node<T> head; // Head of the list
-    private int size;     // Number of elements in the list
+    private Node<T> head; // first node of the list
+    private int size;     // number of elements in the list
 
-    /** Constructs an empty singly linked list. */
+    /**
+     * Constructs an empty singly linked list.
+     */
     public SLL() {
         head = null;
         size = 0;
     }
 
-    /** Adds an element to the end of the list. */
-    public void add(T data) {
-        Node<T> newNode = new Node<>(data);
+    /**
+     * Returns the number of elements in the list.
+     *
+     * @return size of the list
+     */
+    public int size() {
+        return size;
+    }
+
+    /**
+     * Checks if the list is empty.
+     *
+     * @return true if the list has no elements, false otherwise
+     */
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    /**
+     * Adds an element to the end of the list.
+     *
+     * @param value the element to add
+     */
+    public void add(T value) {
+        Node<T> newNode = new Node<>(value);
         if (head == null) {
             head = newNode;
         } else {
             Node<T> current = head;
-            while (current.next != null) {
+            while (current.next != null)
                 current = current.next;
-            }
             current.next = newNode;
         }
         size++;
     }
 
-    /** Inserts an element at a specific index. */
-    public void add(int index, T data) {
-        if (index < 0 || index > size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-        }
-        Node<T> newNode = new Node<>(data);
-        if (index == 0) {
-            newNode.next = head;
-            head = newNode;
-        } else {
-            Node<T> prev = head;
-            for (int i = 0; i < index - 1; i++) {
-                prev = prev.next;
-            }
-            newNode.next = prev.next;
-            prev.next = newNode;
-        }
-        size++;
-    }
-
-    /** Removes the element at a specific index and returns it. */
-    public T remove(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-        }
-        Node<T> removed;
-        if (index == 0) {
-            removed = head;
-            head = head.next;
-        } else {
-            Node<T> prev = head;
-            for (int i = 0; i < index - 1; i++) {
-                prev = prev.next;
-            }
-            removed = prev.next;
-            prev.next = removed.next;
-        }
-        size--;
-        return removed.data;
-    }
-
-    /** Returns the element at a specific index. */
+    /**
+     * Returns the element at the specified index.
+     *
+     * @param index position of the element to retrieve
+     * @return the element at the given index
+     * @throws IndexOutOfBoundsException if index is out of range
+     */
     public T get(int index) {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
-        }
+        checkIndex(index);
         Node<T> current = head;
-        for (int i = 0; i < index; i++) {
+        for (int i = 0; i < index; i++)
             current = current.next;
-        }
         return current.data;
     }
 
-    /** Returns the number of elements in the list. */
-    public int size() {
-        return size;
+    /**
+     * Checks whether an index is valid for this list.
+     *
+     * @param index the index to check
+     * @throws IndexOutOfBoundsException if index is invalid
+     */
+    private void checkIndex(int index) {
+        if (index < 0 || index >= size)
+            throw new IndexOutOfBoundsException();
     }
 
-    /** Returns true if the list is empty. */
-    public boolean isEmpty() {
-        return size == 0;
-    }
+    // -----------------------------
+    // ITERATOR IMPLEMENTATION
+    // -----------------------------
 
-    /** Returns a string representation of the list in [elem1, elem2, ...] format. */
+    /**
+     * Returns a fresh iterator over the elements of this list in proper sequence.
+     *
+     * @return a node-based iterator
+     */
     @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[");
+    public Iterator<T> iterator() {
+        return new SLLIterator();
+    }
+
+    /**
+     * Private iterator class for SLL.
+     * Traverses nodes in order without modifying the list.
+     */
+    private class SLLIterator implements Iterator<T> {
+        private Node<T> current = head;
+
+        /**
+         * Checks if there is a next element.
+         *
+         * @return true if more elements exist, false otherwise
+         */
+        @Override
+        public boolean hasNext() {
+            return current != null;
+        }
+
+        /**
+         * Returns the next element in the iteration.
+         *
+         * @return the next element
+         * @throws NoSuchElementException if no more elements exist
+         */
+        @Override
+        public T next() {
+            if (current == null)
+                throw new NoSuchElementException();
+            T value = current.data;
+            current = current.next;
+            return value;
+        }
+    }
+
+    // -----------------------------
+    // SPLIT METHODS
+    // -----------------------------
+
+    /**
+     * Creates a new list containing a copy of elements from the specified index to the end.
+     * Original list remains unchanged.
+     *
+     * @param index the index at which to split
+     * @return a new list containing the tail elements
+     * @throws IndexOutOfBoundsException if index is invalid
+     */
+    public SLL<T> splitCopy(int index) {
+        if (index < 0 || index > size)
+            throw new IndexOutOfBoundsException();
+
+        SLL<T> newList = new SLL<>();
         Node<T> current = head;
+        for (int i = 0; i < index; i++) {
+            current = current.next; // skip prefix
+        }
         while (current != null) {
-            sb.append(current.data);
-            if (current.next != null) {
-                sb.append(", ");
-            }
+            newList.add(current.data);
             current = current.next;
         }
-        sb.append("]");
-        return sb.toString();
+        return newList;
     }
 
-    /** Main method for quick testing */
-    public static void main(String[] args) {
-        SLL<Integer> list = new SLL<>();
-        list.add(10);
-        list.add(20);
-        list.add(1, 15); // Insert 15 at index 1
-        System.out.println(list); // [10, 15, 20]
+    /**
+     * Transfers elements from the specified index to the end into a new list.
+     * Original list is truncated to elements before the index.
+     *
+     * @param index the index at which to split
+     * @return a new list containing the tail elements
+     * @throws IndexOutOfBoundsException if index is invalid
+     */
+    public SLL<T> splitTransfer(int index) {
+        if (index < 0 || index > size)
+            throw new IndexOutOfBoundsException();
 
-        list.remove(1); 
-        System.out.println(list); // [10, 20]
+        SLL<T> newList = new SLL<>();
+        if (index == 0) { // transfer everything
+            newList.head = head;
+            newList.size = size;
+            head = null;
+            size = 0;
+            return newList;
+        }
+        if (index == size) { // nothing to transfer
+            return newList;
+        }
 
-        System.out.println("Element at index 1: " + list.get(1)); // 20
-        System.out.println("Size: " + list.size()); // 2
-        System.out.println("Is empty? " + list.isEmpty()); // false
+        Node<T> current = head;
+        for (int i = 0; i < index - 1; i++) {
+            current = current.next;
+        }
+
+        newList.head = current.next;
+        newList.size = size - index;
+        current.next = null; // detach tail
+        size = index;
+
+        return newList;
     }
 }
