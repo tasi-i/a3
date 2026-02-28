@@ -8,21 +8,8 @@ import java.util.NoSuchElementException;
  */
 public class SLL<T> implements Iterable<T> {
 
-    /**
-     * Node class representing each element in the linked list.
-     */
-    private static class Node<T> {
-        T data;
-        Node<T> next;
-
-        Node(T data) {
-            this.data = data;
-            this.next = null;
-        }
-    }
-
-    private Node<T> head; // first node of the list
-    private int size;     // number of elements in the list
+    private NodeSL<T> head; // first node of the list
+    private int size;       // number of elements in the list
 
     /**
      * Constructs an empty singly linked list.
@@ -56,16 +43,90 @@ public class SLL<T> implements Iterable<T> {
      * @param value the element to add
      */
     public void add(T value) {
-        Node<T> newNode = new Node<>(value);
+        NodeSL<T> newNode = new NodeSL<>(value);
         if (head == null) {
             head = newNode;
         } else {
-            Node<T> current = head;
+            NodeSL<T> current = head;
             while (current.next != null)
                 current = current.next;
             current.next = newNode;
         }
         size++;
+    }
+
+    /**
+     * Inserts an element at the specified index.
+     *
+     * @param index position to insert at
+     * @param element element to insert
+     * @throws IndexOutOfBoundsException if index is out of range
+     */
+    public void add(int index, T element) {
+        if (index < 0 || index > size)
+            throw new IndexOutOfBoundsException();
+        
+        NodeSL<T> newNode = new NodeSL<>(element);
+        if (index == 0) {
+            newNode.next = head;
+            head = newNode;
+        } else {
+            NodeSL<T> current = head;
+            for (int i = 0; i < index - 1; i++) {
+                current = current.next;
+            }
+            newNode.next = current.next;
+            current.next = newNode;
+        }
+        size++;
+    }
+
+    /**
+     * Adds an element to the end of the list.
+     *
+     * @param value the element to add
+     */
+    public void addLast(T value) {
+        add(value);
+    }
+
+    /**
+     * Returns the head node of the list.
+     *
+     * @return the head node, or null if the list is empty
+     */
+    public NodeSL<T> getHead() {
+        return head;
+    }
+
+    /**
+     * Adds an element after the specified node.
+     *
+     * @param node the node after which to add
+     * @param element the element to add
+     */
+    public void addAfter(NodeSL<T> node, T element) {
+        if (node == null)
+            throw new IllegalArgumentException("Node cannot be null");
+        NodeSL<T> newNode = new NodeSL<>(element);
+        newNode.next = node.next;
+        node.next = newNode;
+        size++;
+    }
+
+    /**
+     * Removes the element after the specified node.
+     *
+     * @param node the node whose next element should be removed
+     * @return the removed element
+     */
+    public T removeAfter(NodeSL<T> node) {
+        if (node == null || node.next == null)
+            throw new IllegalArgumentException("Cannot remove after null or node with no next");
+        T data = node.next.data;
+        node.next = node.next.next;
+        size--;
+        return data;
     }
 
     /**
@@ -77,10 +138,35 @@ public class SLL<T> implements Iterable<T> {
      */
     public T get(int index) {
         checkIndex(index);
-        Node<T> current = head;
+        NodeSL<T> current = head;
         for (int i = 0; i < index; i++)
             current = current.next;
         return current.data;
+    }
+
+    /**
+     * Removes and returns the element at the specified index.
+     *
+     * @param index position of the element to remove
+     * @return the removed element
+     * @throws IndexOutOfBoundsException if index is out of range
+     */
+    public T remove(int index) {
+        checkIndex(index);
+        T data;
+        if (index == 0) {
+            data = head.data;
+            head = head.next;
+        } else {
+            NodeSL<T> current = head;
+            for (int i = 0; i < index - 1; i++) {
+                current = current.next;
+            }
+            data = current.next.data;
+            current.next = current.next.next;
+        }
+        size--;
+        return data;
     }
 
     /**
@@ -93,7 +179,6 @@ public class SLL<T> implements Iterable<T> {
         if (index < 0 || index >= size)
             throw new IndexOutOfBoundsException();
     }
-
     // -----------------------------
     // ITERATOR IMPLEMENTATION
     // -----------------------------
@@ -113,7 +198,7 @@ public class SLL<T> implements Iterable<T> {
      * Traverses nodes in order without modifying the list.
      */
     private class SLLIterator implements Iterator<T> {
-        private Node<T> current = head;
+        private NodeSL<T> current = head;
 
         /**
          * Checks if there is a next element.
@@ -158,7 +243,7 @@ public class SLL<T> implements Iterable<T> {
             throw new IndexOutOfBoundsException();
 
         SLL<T> newList = new SLL<>();
-        Node<T> current = head;
+        NodeSL<T> current = head;
         for (int i = 0; i < index; i++) {
             current = current.next; // skip prefix
         }
@@ -193,7 +278,7 @@ public class SLL<T> implements Iterable<T> {
             return newList;
         }
 
-        Node<T> current = head;
+        NodeSL<T> current = head;
         for (int i = 0; i < index - 1; i++) {
             current = current.next;
         }
