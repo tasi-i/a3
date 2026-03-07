@@ -45,7 +45,7 @@ Both operations are O(n).
 Please provide a brief reflection about your experience with this assignment. What was easiest? What was hardest? How did your understanding of iteration and cost models evolve?
 
 The easiest part was implementing the DynamicArray iterator because it is simple index advancement. The hardest part was  implementing splitTransfer or SLL without accidentally creating new nodes.
-This assignment helped clarify how representation affects cost:
+This assignment helped clarify how representation affects cost/time:
 - Linked lists are fast at head operations but slow at random access.
 - Arrays are fast at random access but expensive for shifting.
 - Even when asymptotic complexity matches, constants differ.

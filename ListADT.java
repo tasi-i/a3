@@ -6,50 +6,21 @@
  */
 public interface ListADT<E> {
 
-    /**
-     * Returns number of elements in the list.
-     *
-     * @return size of the list
-     */
+    /** Returns number of elements in the list. */
     int size();
 
-    /**
-     * Returns true if the list contains no elements.
-     *
-     * @return true if empty
-     */
+    /** Returns true if the list contains no elements. */
     boolean isEmpty();
 
-    /**
-     * Returns element at index.
-     *
-     * @param index position of element
-     * @return element at index
-     */
+    /** Returns element at index. */
     E get(int index);
 
-    /**
-     * Replaces element at index.
-     *
-     * @param index index to replace
-     * @param element new element
-     * @return old element
-     */
+    /** Replaces element at index. Returns old element. */
     E set(int index, E element);
 
-    /**
-     * Inserts element at index.
-     *
-     * @param index position
-     * @param element element to insert
-     */
+    /** Inserts element at index. */
     void add(int index, E element);
 
-    /**
-     * Removes element at index.
-     *
-     * @param index index to remove
-     * @return removed element
-     */
+    /** Removes element at index. Returns removed element. */
     E remove(int index);
 }
