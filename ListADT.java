@@ -1,69 +1,55 @@
-import java.util.Iterator;
-
 /**
- * A simple generic List ADT interface.
+ * A ListADT represents an ordered, resizable sequence of elements.
+ * Elements are arranged by position and numbered starting at 0.
  *
- * @param <T> element type stored in the list
+ * @param <E> type of elements stored in the list
  */
-public interface ListADT<T> extends Iterable<T> {
+public interface ListADT<E> {
 
     /**
-     * Returns the number of elements in the list.
+     * Returns number of elements in the list.
      *
-     * @return current size
+     * @return size of the list
      */
     int size();
 
     /**
-     * Returns the element at a given index.
+     * Returns true if the list contains no elements.
      *
-     * @param index position to access
+     * @return true if empty
+     */
+    boolean isEmpty();
+
+    /**
+     * Returns element at index.
+     *
+     * @param index position of element
      * @return element at index
-     * @throws IndexOutOfBoundsException if index invalid
      */
-    T get(int index);
+    E get(int index);
 
     /**
-     * Inserts element at given index.
+     * Replaces element at index.
      *
-     * @param index position to insert
+     * @param index index to replace
+     * @param element new element
+     * @return old element
+     */
+    E set(int index, E element);
+
+    /**
+     * Inserts element at index.
+     *
+     * @param index position
      * @param element element to insert
-     * @throws IndexOutOfBoundsException if index invalid
      */
-    void add(int index, T element);
+    void add(int index, E element);
 
     /**
-     * Removes and returns element at index.
+     * Removes element at index.
      *
-     * @param index position to remove
+     * @param index index to remove
      * @return removed element
-     * @throws IndexOutOfBoundsException if index invalid
      */
-    T remove(int index);
-
-    /**
-     * Copy-style split.
-     *
-     * @param index split index
-     * @return new list containing elements index..size-1
-     * @throws IndexOutOfBoundsException if index invalid
-     */
-    ListADT<T> splitCopy(int index);
-
-    /**
-     * Transfer-style split.
-     *
-     * @param index split index
-     * @return new list containing elements index..size-1
-     * @throws IndexOutOfBoundsException if index invalid
-     */
-    ListADT<T> splitTransfer(int index);
-
-    /**
-     * Returns an iterator over elements in list order.
-     *
-     * @return fresh iterator starting at beginning
-     */
-    @Override
-    Iterator<T> iterator();
+    E remove(int index);
 }
